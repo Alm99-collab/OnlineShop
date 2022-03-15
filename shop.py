@@ -15,7 +15,7 @@ class Product:
         self.product_price = product_price
 
 
-class Order:
+class Order: 
 
     def __init__(self):
         self.orders_list = []
@@ -29,18 +29,21 @@ class User:
 
     def count_bill(self):
         user_sum = 0
-        if len(self.order.orders_list) != 0:
+        if len(self.order.orders_list) != 0: # придирка: достаточно " if self.order.orders_list "
             for product in self.order.orders_list:
                 user_sum += product.product_price
-            return user_sum
-        else:
-            return user_sum
+        #придирка: если длина(self.order.orders_list) отличная от 0 то user_sum не меняем, else не нужен, можем сразу вернуть user_sum
+                #return user_sum                
+            #else:                               
+                #return user_sum
+        return user_sum 
 
-    def make_order(self, categories_list):
+    def make_order(self, categories_list): #  Можно переименовать в add_to_order, заказ уже сформирован когда создан пользователь
         i = 1
         print('Выберите категорию :')
-        for category in categories_list:
-            print(str(i) + ').' + str(category.category_name))
+        for category in categories_list: # "Этот цикл встречается в коде 3 раза, можно вынести в функцию, облегчит код"
+            #print(str(i) + ').' + str(category.category_name)) #придирка: можно использовать f-строки и не нужно преобразовывать каждый атрибут к строковому типу
+            print(f"{i}).{category.category_name}")
             i += 1
         choice = int(input('Ваш выбор: '))
         i = 1
@@ -142,7 +145,7 @@ class Interface:
         print('2). Пользователь.')
         choice = int(input('Ваш выбор: '))
         if choice == 1:
-            self.user_flag = 1
+            self.user_flag = 1 # Можно заменить на self.user_flag == choice и перенести до условного оператора (или вообще убрать choice, использовать self.user_flag)
             i = 1
             print('\nВыберите администратора: ')
             for admin in self.admins_list:
@@ -162,7 +165,7 @@ class Interface:
 
     def show_menu(self):
         flag = True
-        while flag:
+        while flag: 
             if self.user_flag == 1:
                 i = 1
                 print('Добро пожаловать, ' + str(self.current_user.user_name) + '\nЧто Вы хотите сделать?\n')
@@ -177,7 +180,7 @@ class Interface:
                 print(str(i) + '). Добавить пользователя.')
                 i += 1
                 print(str(i) + '). Выход.\n')
-                choice = input('Ваш выбор: ')
+                choice = input('Ваш выбор: ') # Можно сразу преобразовать choice к int 
                 if int(choice) == 1:
                     self.current_user.add_category(self.categories_list)
                 elif int(choice) == 2:
@@ -190,17 +193,18 @@ class Interface:
                     self.create_user()
                 elif int(choice) == 6:
                     flag = False
-                    sys.exit()
+                    #sys.exit()  # Вроде не нужен? из цикла при flag = False выходит 
             elif self.user_flag == 2:
                 user_sum = self.current_user.count_bill()
                 print('Добро пожаловать, ' + str(self.current_user.user_name))
                 print('Стоимость Ваших покупок: ' + str(user_sum))
-                if len(self.current_user.order.orders_list) != 0:
+                if len(self.current_user.order.orders_list) != 0: # придирка: if self.current_user.order.orders_list
                     print('Ваши товары: ')
                     i = 1
                     for order in self.current_user.order.orders_list:
                         print(str(i) + ').' + str(order.product_name) + ', цена:' + str(order.product_price))
                         i += 1
+                """
                 print('Что Вы хотите сделать?\n')
                 i = 1
                 print(str(i) + '). Добавить товар в корзину.')
@@ -212,6 +216,21 @@ class Interface:
                 print(str(i) + '). Добавить пользователя.')
                 i += 1
                 print(str(i) + '). Выход.\n')
+                можно заменить на
+                |
+                V
+                """
+                #-----Вот это-------------------------------------
+                answer_dict = { 1 : "). Добавить товар в корзиную",
+                                2 : "). Удалить товар из корзины.",
+                                3 : "). Сменить пользователя.",
+                                4 : "). Добавить пользователя.", 
+                                5 : "). Выход.\n"}
+                for key, value in answer_dict.items():
+                    print(f"{key}{value}")
+                #--------------------------------------------------
+
+                # Условные операторы тоже можно заменить на словарь
                 choice = input('Ваш выбор: ')
                 if int(choice) == 1:
                     self.current_user.make_order(self.categories_list)
@@ -224,7 +243,7 @@ class Interface:
                 elif int(choice) == 5:
                     flag = False
                     sys.exit()
-
+                
     def start_menu(self):
         print('Добавьте пользователей.')
         self.create_user()
